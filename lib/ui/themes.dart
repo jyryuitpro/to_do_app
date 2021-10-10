@@ -10,12 +10,18 @@ Color darkHeaderClr = Color(0xFF424242);
 
 class Themes {
   static final light = ThemeData(
+    backgroundColor: Colors.white,
     primaryColor: bluishClr,
     brightness: Brightness.light,
   );
 
   static final dark = ThemeData(
+    backgroundColor: darkGreyClr,
     primaryColor: darkGreyClr,
     brightness: Brightness.dark,
   );
+}
+
+TextStyle get subHeadingStyle {
+
 }
