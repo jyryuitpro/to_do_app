@@ -13,6 +13,15 @@ class AddTaskPage extends StatefulWidget {
 
 class _AddTaskPageState extends State<AddTaskPage> {
   DateTime _selectedDate = DateTime.now();
+  String _startTime = DateFormat('hh:mm a').format(DateTime.now()).toString();
+  String _endTime = '9:30 PM';
+  int _selectedRemind = 5;
+  List<int> remindList = [
+    5,
+    10,
+    15,
+    20,
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -49,8 +58,63 @@ class _AddTaskPageState extends State<AddTaskPage> {
                     color: Colors.grey,
                   ),
                   onPressed: () {
-
+                    _getDateFromUser();
                   },
+                ),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: MyInputField(
+                      title: 'Start Time',
+                      hint: _startTime,
+                      widget: IconButton(
+                        icon: Icon(
+                          Icons.access_time_rounded,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          _getTimeFromUser(isStartTime: true);
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 12,
+                  ),
+                  Expanded(
+                    child: MyInputField(
+                      title: 'End Time',
+                      hint: _endTime,
+                      widget: IconButton(
+                        icon: Icon(
+                          Icons.access_time_rounded,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          _getTimeFromUser(isStartTime: false);
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              MyInputField(
+                title: 'Remind',
+                hint: '$_selectedRemind minutes early',
+                widget: DropdownButton(
+                  icon: Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Colors.grey,
+                  ),
+                  items: remindList.map<DropdownMenuItem<String>>(
+                    (int value) {
+                      return
+                    },
+                  ),
+                  iconSize: 32,
+                  elevation: 4,
+                  style: subTitleStyle,
                 ),
               ),
             ],
@@ -97,5 +161,51 @@ class _AddTaskPageState extends State<AddTaskPage> {
     );
   }
 
+  _getDateFromUser() async {
+    DateTime? _pickerDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2015),
+      lastDate: DateTime(2031),
+    );
 
+    if (_pickerDate != null) {
+      setState(() {
+        _selectedDate = _pickerDate;
+        print(_selectedDate);
+      });
+    } else {
+      print("it's null or something is wrong");
+    }
+  }
+
+  _getTimeFromUser({required bool isStartTime}) async {
+    var _pickerTime = await _showTimePicker();
+    String _formatedTime = _pickerTime.format(context);
+
+    if (_pickerTime == null) {
+      print('Time canceld');
+    } else if (isStartTime == true) {
+      setState(() {
+        _startTime = _formatedTime;
+        print(_startTime);
+      });
+    } else if (isStartTime == false) {
+      setState(() {
+        _endTime = _formatedTime;
+        print(_endTime);
+      });
+    }
+  }
+
+  _showTimePicker() {
+    return showTimePicker(
+      initialEntryMode: TimePickerEntryMode.input,
+      context: context,
+      initialTime: TimeOfDay(
+        hour: int.parse(_startTime.split(':')[0]),
+        minute: int.parse(_startTime.split(':')[1].split(' ')[0]),
+      ),
+    );
+  }
 }
