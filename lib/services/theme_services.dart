@@ -7,12 +7,10 @@ class ThemeService {
   final _key = 'isDarkMode';
 
   _saveThemeToBox(bool isDarkMode) {
-    print('===== isDarkMode $isDarkMode =====');
     _box.write(_key, isDarkMode);
   }
 
   bool _loadThemeFromBox() {
-    print('===== _box.read(_key): ${_box.read(_key)} =====');
     return _box.read(_key) ?? false;
   }
 
