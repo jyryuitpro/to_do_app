@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:to_do_app/controllers/task_controller.dart';
 import 'package:to_do_app/services/notification_services.dart';
 import 'package:to_do_app/services/theme_services.dart';
 import 'package:to_do_app/ui/add_task_page.dart';
@@ -18,7 +22,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   DateTime _selectedDate = DateTime.now();
+  final _taskController = Get.put(TaskController());
   var notifyHelper;
+  bool animate = false;
+  double left = 50;
+  double top = 50;
 
   @override
   void initState() {
@@ -37,6 +45,10 @@ class _HomePageState extends State<HomePage> {
         children: [
           _addTaskBar(),
           _addDateBar(),
+          SizedBox(
+            height: 12,
+          ),
+          _showTasks(),
         ],
       ),
     );
@@ -109,7 +121,10 @@ class _HomePageState extends State<HomePage> {
           ),
           MyButton(
             label: '+ Add Task',
-            onTap: () => Get.to(AddTaskPage()),
+            onTap: () async {
+              await Get.to(AddTaskPage());
+              _taskController.getTasks();
+            },
           ),
         ],
       ),
@@ -155,6 +170,47 @@ class _HomePageState extends State<HomePage> {
           _selectedDate = selectedDate;
         },
       ),
+    );
+  }
+
+  _showTasks() {
+    if (_taskController.taskList.isEmpty) {
+      return _noTaskMsg();
+    }
+  }
+
+  _noTaskMsg() {
+    return Stack(
+      children: [
+        Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                'images/task.svg',
+                color: primaryClr.withOpacity(0.5),
+                height: 90,
+                semanticsLabel: 'Task',
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 30,
+                  vertical: 30,
+                ),
+                child: Text(
+                  "You do not have any tasks yet!\nAdd new tasks to make your days productive.",
+                  textAlign: TextAlign.center,
+                  style: subTitleStyle,
+                ),
+              ),
+              SizedBox(
+                height: 80,
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
